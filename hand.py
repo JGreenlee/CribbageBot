@@ -109,10 +109,10 @@ class Hand:
             fullhand.append(starter)
         else:
             fullhand = self.cards
-        result = Image.new("RGBA", (691 * len(fullhand), 1056))
+        result = Image.new("RGBA", (196 * len(fullhand), 300))
 
         for i in range(len(fullhand)):
-            img = Image.open("cards_pngs/" + fullhand[i].__repr__() + ".png")
+            img = Image.open("cards_pngs/" + fullhand[i].__repr__() + ".bmp")
             x, y = img.size
             result.paste(img, (x * i, 0))
             result.save(filename + ".png")

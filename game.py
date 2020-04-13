@@ -59,7 +59,6 @@ class Game:
 
         print("\n\n")
 
-
         # TODO pegging
 
         print("Player One:")
