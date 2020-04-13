@@ -2,7 +2,7 @@ from PIL import Image
 
 
 class Hand:
-    def __init__(self, cards):
+    def __init__(self, cards=[]):
         self.cards = cards
         self.score = 0
 
@@ -101,7 +101,8 @@ class Hand:
                 self.score += 1
 
     # returns image showing cards in hand
-    def show_hand(self, starter=0):
+    # TODO standardize images' sizes
+    def show_hand(self, filename, starter=0):
 
         if starter != 0:
             fullhand = self.cards.copy()
@@ -114,7 +115,7 @@ class Hand:
             img = Image.open("cards_pngs/" + fullhand[i].__repr__() + ".png")
             x, y = img.size
             result.paste(img, (x * i, 0))
-            result.save("output.png")
+            result.save(filename + ".png")
 
     def __repr__(self):
         ret = ""
