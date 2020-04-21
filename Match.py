@@ -6,7 +6,7 @@ class Match:
     THREE_PLAYERS = False
 
     def __init__(self, three_players=False):
-        Game(three_players)
+        Game("p1", "p2")
 
 
 Match()

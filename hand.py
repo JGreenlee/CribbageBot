@@ -2,14 +2,20 @@ from PIL import Image
 
 
 class Hand:
-    def __init__(self, cards=[]):
+    def __init__(self, name=0, cards=[]):
+        self.name = name
         self.cards = cards
+        self.pegging_cards = []
         self.score = 0
 
     def toss(self, index):
         card = self.cards[index]
         del self.cards[index]
         return card
+
+    def has_cards(self):
+        if len(self.pegging_cards) > 0:
+            return True
 
     def fifteens(self, starter, x=0, total=0):
         while x < 5:

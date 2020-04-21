@@ -1,25 +1,26 @@
 from deck import Deck
 from hand import Hand
-
+from pegging import Pegging
 
 class Game:
 
-    def __init__(self, three_players):
+    def __init__(self, p1, p2, p3=0):
 
-        self.three_players = three_players
+        self.three_players = p3 != 0
 
         deck = Deck()
         deck.shuffle()
 
         if self.three_players:
-            one = Hand(deck.deal(5))
-            two = Hand(deck.deal(5))
-            three = Hand(deck.deal(5))
+            one = Hand(p1, deck.deal(5))
+            two = Hand(p2, deck.deal(5))
+            three = Hand(p3, deck.deal(5))
             crib = Hand(deck.deal(1))
         else:
-            one = Hand(deck.deal(6))
+            one = Hand(p1, deck.deal(6))
             # one = Hand([Card(0, 5), Card(1, 5), Card(2, 5), Card(3, 11)])
-            two = Hand(deck.deal(6))
+            two = Hand(p2, deck.deal(6))
+            three = 0
             crib = Hand()
 
         one.show_hand("one")
@@ -28,24 +29,24 @@ class Game:
             three.show_hand("three")
 
         if self.three_players:
-            resp = input("Player One  -  Select 1 cards to get rid of:")
+            resp = input(one.name + "  -  Select 1 cards to get rid of:")
             first = one.cards.pop(int(resp))
             crib.cards.append(first)
 
-            resp = input("\n\nPlayer Two  -  Select 1 cards to get rid of:")
+            resp = input("\n\n" + two.name + "  -  Select 1 cards to get rid of:")
             first = two.cards.pop(int(resp))
             crib.cards.append(first)
 
-            resp = input("\n\nPlayer Three  -  Select 1 cards to get rid of:")
+            resp = input("\n\n" + three.name + "  -  Select 1 cards to get rid of:")
             first = three.cards.pop(int(resp))
             crib.cards.append(first)
         else:
-            resp = input("Player One  -  Select 2 cards to get rid of:")
+            resp = input(one.name + "  -  Select 1 cards to get rid of:")
             resp = resp.split(",")
             first, second = one.cards.pop(int(resp[1])), one.cards.pop(int(resp[0]))
             crib.cards.append(first), crib.cards.append(second)
 
-            resp = input("\n\nPlayer Two  -  Select 2 cards to get rid of:")
+            resp = input("\n\n" + two.name + "  -  Select 1 cards to get rid of:")
             resp = resp.split(",")
             first, second = two.cards.pop(int(resp[1])), two.cards.pop(int(resp[0]))
             crib.cards.append(first), crib.cards.append(first)
@@ -61,7 +62,19 @@ class Game:
 
         # TODO pegging
 
-        print("Player One:")
+        if three:
+            players = [one, two, three]
+        else:
+            players = [one, two]
+
+        for hand in players:
+            hand.pegging_cards = hand.cards.copy()
+
+        Pegging(players)
+
+        # counting hands
+
+        print(one.name + "'s hand:")
         print(one)
         print("*", end="", flush=True), print(starter)
         one.fifteens(starter)
@@ -72,7 +85,7 @@ class Game:
 
         print("\n\n")
 
-        print("Player Two:")
+        print(two.name + "'s hand:")
         print(two)
         print("*", end="", flush=True), print(starter)
         two.fifteens(starter)
@@ -81,10 +94,10 @@ class Game:
         two.flush_and_nobs(starter)
         print(str(two.score) + " points!")
 
-        if three_players:
+        if self.three_players:
             print("\n\n")
 
-            print("Player Three:")
+            print(three.name + "'s hand:")
             print(three)
             print("*", end="", flush=True), print(starter)
             three.fifteens(starter)
@@ -95,7 +108,7 @@ class Game:
 
         print("\n\n")
 
-        print("Crib:")
+        print("The Crib:")
         print(crib)
         print("*", end="", flush=True), print(starter)
         crib.fifteens(starter)

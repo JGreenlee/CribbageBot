@@ -3,6 +3,10 @@ class Card:
     def __init__(self, suit, value):
         self.suit = suit
         self.value = value
+        if value > 9:
+            self.pegging_value = 10
+        else:
+            self.pegging_value = value
 
     # suits are 0-3
     def get_suit_name(self):
