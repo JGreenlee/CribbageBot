@@ -2,9 +2,9 @@ from PIL import Image
 
 
 class Hand:
-    def __init__(self, name=0, cards=[]):
+    def __init__(self, cards=[], name=0):
         self.name = name
-        self.cards = cards
+        self.cards = sorted(cards)
         self.pegging_cards = []
         self.score = 0
 
@@ -107,7 +107,6 @@ class Hand:
                 self.score += 1
 
     # returns image showing cards in hand
-    # TODO standardize images' sizes
     def show_hand(self, filename, starter=0):
 
         if starter != 0:

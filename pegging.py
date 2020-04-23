@@ -1,7 +1,8 @@
 class Pegging:
 
-    def __init__(self, players):
+    def __init__(self, match, players):
 
+        self.match = match
         self.players = players
 
         pegging_count = 0
@@ -21,19 +22,21 @@ class Pegging:
             if pegging_count + players[to_play].pegging_cards[0].pegging_value <= 31:
                 resp = input(str(pegging_count) + " to " + players[to_play].name + "  -  Select a card to play:")
                 just_played = players[to_play].pegging_cards.pop(int(resp))
+                pegging_count += just_played.pegging_value
+                print(players[to_play].name + " played " + just_played.get_value_name() + ". Total is " + str(
+                    pegging_count))
+                pairs_points = self.pairs(last_six, just_played)
+                if pairs_points:
+                    match.award_points(pairs_points, players[to_play], "pegging pairs.")
                 # TODO pegging straights
                 last_six.append(just_played)
-                pegging_count += just_played.pegging_value
+                if len(last_six) > 6:
+                    last_six.pop(0)
                 if pegging_count == 15:
-                    # AWARD POINTS - landing on 15
-                    print("2 point to " + players[last_played].name + " for landing on 15.")
-                    players[last_played].score += 2
+                    self.match.award_points(2, players[to_play], "for landing on 15.")
                 elif pegging_count == 31:
-                    # AWARD POINTS - landing on 31
-                    print("2 point to " + players[last_played].name + " for landing on 31.")
-                    players[last_played].score += 2
+                    self.match.award_points(2, players[to_play], "for landing on 31.")
                     pegging_count = 0
-                print(players[to_play].name + " played " + just_played.get_value_name() + ". Total is " + str(pegging_count))
                 last_played = to_play
             else:
                 next_player = players[self.get_next_player(to_play)]
@@ -43,14 +46,13 @@ class Pegging:
                         or pegging_count + next_player.pegging_cards[0].pegging_value > 31 \
                         and len(next_next_player.pegging_cards) < 1 \
                         or pegging_count + next_next_player.pegging_cards[0].pegging_value > 31:
-                    # AWARD POINTS - for "go"
-                    print("1 point to " + players[last_played].name + " for \"go.\"")
-                    players[last_played].score += 1
+                    self.match.award_points(1, players[last_played], "for \"go.\"")
                     pegging_count = 0
+                else:
+                    print("someone can play")
 
         # AWARD POINTS - for last card
-        print("1 point to " + players[last_played].name + " for last card.")
-        players[last_played].score += 1
+        self.match.award_points(1, players[last_played], "for last card.")
 
     def get_next_player(self, current_player):
         if current_player + 1 < len(self.players):
@@ -81,15 +83,14 @@ class Pegging:
         #         streak = 1
         #         double = 0
 
-
-def pairs(self, last_six, last):
-    total = 0
-    if last.value == last_six[5].value:
-        if last.value == last_six[4].value:
-            if last.value == last_six[4].value:
-                total = 12
+    def pairs(self, last_six, last):
+        total = 0
+        if len(last_six) > 0 and last.value == last_six[len(last_six)-1].value:
+            if len(last_six) > 1 and last.value == last_six[len(last_six)-2].value:
+                if len(last_six) > 2 and last.value == last_six[len(last_six)-3].value:
+                    total = 12
+                else:
+                    total = 6
             else:
-                total = 6
-        else:
-            total = 2
-    return total
+                total = 2
+        return total

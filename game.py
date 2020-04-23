@@ -2,24 +2,26 @@ from deck import Deck
 from hand import Hand
 from pegging import Pegging
 
+
 class Game:
 
-    def __init__(self, p1, p2, p3=0):
+    def __init__(self, match, players):
 
-        self.three_players = p3 != 0
+        self.match = match
+        self.three_players = len(players) > 2
 
         deck = Deck()
         deck.shuffle()
 
         if self.three_players:
-            one = Hand(p1, deck.deal(5))
-            two = Hand(p2, deck.deal(5))
-            three = Hand(p3, deck.deal(5))
+            one = Hand(deck.deal(5), players[0])
+            two = Hand(deck.deal(5), players[1])
+            three = Hand(deck.deal(5), players[2])
             crib = Hand(deck.deal(1))
         else:
-            one = Hand(p1, deck.deal(6))
+            one = Hand(deck.deal(6), players[0])
             # one = Hand([Card(0, 5), Card(1, 5), Card(2, 5), Card(3, 11)])
-            two = Hand(p2, deck.deal(6))
+            two = Hand(deck.deal(6), players[1])
             three = 0
             crib = Hand()
 
@@ -60,8 +62,6 @@ class Game:
 
         print("\n\n")
 
-        # TODO pegging
-
         if three:
             players = [one, two, three]
         else:
@@ -70,7 +70,7 @@ class Game:
         for hand in players:
             hand.pegging_cards = hand.cards.copy()
 
-        Pegging(players)
+        Pegging(match, players)
 
         # counting hands
 
@@ -81,7 +81,7 @@ class Game:
         one.pairs(starter)
         one.straights(starter)
         one.flush_and_nobs(starter)
-        print(str(one.score) + " points!")
+        self.match.award_points(one.score, one, "their hand.")
 
         print("\n\n")
 
@@ -92,7 +92,7 @@ class Game:
         two.pairs(starter)
         two.straights(starter)
         two.flush_and_nobs(starter)
-        print(str(two.score) + " points!")
+        self.match.award_points(two.score, two, "their hand.")
 
         if self.three_players:
             print("\n\n")
@@ -104,7 +104,7 @@ class Game:
             three.pairs(starter)
             three.straights(starter)
             three.flush_and_nobs(starter)
-            print(str(three.score) + " points!")
+            self.match.award_points(three.score, three, "their hand.")
 
         print("\n\n")
 
@@ -115,4 +115,5 @@ class Game:
         crib.pairs(starter)
         crib.straights(starter)
         crib.flush_and_nobs(starter)
-        print(str(crib.score) + " points!")
+        # TODO give crib points to dealer
+        print(str(crib.score) + " points in the crib!")
