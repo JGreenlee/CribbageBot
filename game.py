@@ -74,23 +74,12 @@ class Game:
 
         # counting hands
 
-        print(one.name + "'s hand:")
-        print(one)
-        print("*", end="", flush=True), print(starter)
-        one.fifteens(starter)
-        one.pairs(starter)
-        one.straights(starter)
-        one.flush_and_nobs(starter)
-        self.match.award_points(one.score, one, "their hand.")
-
-        print("\n\n")
-
         print(two.name + "'s hand:")
         print(two)
         print("*", end="", flush=True), print(starter)
         two.fifteens(starter)
         two.pairs(starter)
-        two.straights(starter)
+        two.runs(starter)
         two.flush_and_nobs(starter)
         self.match.award_points(two.score, two, "their hand.")
 
@@ -102,18 +91,28 @@ class Game:
             print("*", end="", flush=True), print(starter)
             three.fifteens(starter)
             three.pairs(starter)
-            three.straights(starter)
+            three.runs(starter)
             three.flush_and_nobs(starter)
             self.match.award_points(three.score, three, "their hand.")
 
         print("\n\n")
 
-        print("The Crib:")
+        print(one.name + "'s hand:")
+        print(one)
+        print("*", end="", flush=True), print(starter)
+        one.fifteens(starter)
+        one.pairs(starter)
+        one.runs(starter)
+        one.flush_and_nobs(starter)
+        self.match.award_points(one.score, one, "their hand.")
+
+        print("\n\n")
+
+        print(one.name + "'s Crib:")
         print(crib)
         print("*", end="", flush=True), print(starter)
         crib.fifteens(starter)
         crib.pairs(starter)
-        crib.straights(starter)
+        crib.runs(starter)
         crib.flush_and_nobs(starter)
-        # TODO give crib points to dealer
-        print(str(crib.score) + " points in the crib!")
+        self.match.award_points(crib.score, one, "their crib.")
