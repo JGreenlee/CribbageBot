@@ -52,7 +52,7 @@ class Hand:
                 if j != i and i.value == j.value:
                     self.score += 1
 
-    def straights(self, starter):
+    def runs(self, starter):
         fullhand = self.cards.copy()
         fullhand.append(starter)
 
