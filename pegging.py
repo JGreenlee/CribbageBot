@@ -28,7 +28,9 @@ class Pegging:
                 pairs_points = self.pairs(last_six, just_played)
                 if pairs_points:
                     match.award_points(pairs_points, players[to_play], "pegging pairs.")
-                # TODO pegging straights
+                runs_points = self.runs(last_six, just_played)
+                if runs_points:
+                    match.award_points(runs_points, players[to_play], "pegging a run of " + str(runs_points) + ".")
                 last_six.append(just_played)
                 if len(last_six) > 6:
                     last_six.pop(0)
@@ -37,6 +39,7 @@ class Pegging:
                 elif pegging_count == 31:
                     self.match.award_points(2, players[to_play], "for landing on 31.")
                     pegging_count = 0
+                    last_six.clear()
                 last_played = to_play
             else:
                 next_player = players[self.get_next_player(to_play)]
@@ -48,8 +51,11 @@ class Pegging:
                         or pegging_count + next_next_player.pegging_cards[0].pegging_value > 31:
                     self.match.award_points(1, players[last_played], "for \"go.\"")
                     pegging_count = 0
+                    last_six.clear()
                 else:
+                    # TODO fix someone can play bug
                     print("someone can play")
+                    raise Exception
 
         # AWARD POINTS - for last card
         self.match.award_points(1, players[last_played], "for last card.")
@@ -61,33 +67,32 @@ class Pegging:
             next_player = 0
         return next_player
 
-    def runs(self, last_six, last):
-        return
-        # from hand.py
-        # for x in range(4):
-        #     if fullhand[x + 1].value == fullhand[x].value:
-        #         double = fullhand[x].value
-        #         if fullhand[x].value == double:
-        #             triple = True
-        #     elif fullhand[x + 1].value == fullhand[x].value + 1:
-        #         streak += 1
-        #     else:
-        #         if streak > 2:
-        #             if triple:
-        #                 self.score += streak * 3
-        #             elif double != 0:
-        #                 self.score += streak * 2
-        #             else:
-        #                 self.score += streak
-        #
-        #         streak = 1
-        #         double = 0
+    @staticmethod
+    def runs(last_six, last):
+        # check for run of x
+        for x in range(7, 2, -1):  # at most, you can peg a run of 7
+            if len(last_six) - x + 1 >= 0:
+                if Pegging.is_run(last_six[len(last_six) - x + 1:], last):
+                    return x
+        return 0
 
-    def pairs(self, last_six, last):
+    @staticmethod
+    def is_run(cards, card=0):
+        copy = cards.copy()
+        if card:
+            copy.append(card)
+        sorted_cards = sorted(copy)
+        for x in range(len(sorted_cards) - 1):
+            if sorted_cards[x + 1].value != sorted_cards[x].value + 1:
+                return False
+        return True
+
+    @staticmethod
+    def pairs(last_six, last):
         total = 0
-        if len(last_six) > 0 and last.value == last_six[len(last_six)-1].value:
-            if len(last_six) > 1 and last.value == last_six[len(last_six)-2].value:
-                if len(last_six) > 2 and last.value == last_six[len(last_six)-3].value:
+        if len(last_six) > 0 and last.value == last_six[len(last_six) - 1].value:
+            if len(last_six) > 1 and last.value == last_six[len(last_six) - 2].value:
+                if len(last_six) > 2 and last.value == last_six[len(last_six) - 3].value:
                     total = 12
                 else:
                     total = 6
