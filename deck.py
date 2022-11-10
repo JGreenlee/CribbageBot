@@ -1,5 +1,6 @@
-from card import Card
 from random import shuffle
+
+from card import Card
 
 
 class Deck:
@@ -8,6 +9,7 @@ class Deck:
         for j in range(4):
             for k in range(1, 14):
                 self.cards.append(Card(j, k))
+        self.shuffle()
 
     def shuffle(self):
         shuffle(self.cards)
@@ -21,5 +23,3 @@ class Deck:
         for i in range(number_of_cards):
             hand.append(self.cards.pop())
         return hand
-
-

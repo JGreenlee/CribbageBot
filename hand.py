@@ -1,10 +1,14 @@
+from typing import List
 from PIL import Image
+
+from card import Card
 
 
 class Hand:
-    def __init__(self, cards=[], name=0):
+    def __init__(self, cards: List[Card] = [], name: str = ''):
         self.name = name
-        self.cards = sorted(cards)
+        self.cards: List[Card] = sorted(cards)
+        self.dealt_cards = self.cards.copy()
         self.pegging_cards = []
         self.score = 0
 
@@ -107,20 +111,20 @@ class Hand:
                 self.score += 1
 
     # returns image showing cards in hand
-    def show_hand(self, filename, starter=0):
+    def show_hand(self, filename, starter=None, pegging=False):
 
-        if starter != 0:
-            fullhand = self.cards.copy()
+        if starter != None:
+            fullhand = self.pegging_cards if pegging else self.cards.copy()
             fullhand.append(starter)
         else:
-            fullhand = self.cards
+            fullhand = self.pegging_cards if pegging else self.cards
         result = Image.new("RGBA", (196 * len(fullhand), 300))
 
         for i in range(len(fullhand)):
-            img = Image.open("cards_pngs/" + fullhand[i].__repr__() + ".bmp")
+            img = Image.open("cards_pngs/" + fullhand[i].filename() + ".bmp")
             x, y = img.size
             result.paste(img, (x * i, 0))
-            result.save(filename + ".png")
+        return result
 
     def __repr__(self):
         ret = ""
